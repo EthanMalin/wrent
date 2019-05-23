@@ -1,0 +1,8 @@
+[package]
+name = "wrent"
+version = "0.1.0"
+authors = ["Ethan"]
+edition = "2018"
+
+[dependencies]
+winit = "0.19.1"
