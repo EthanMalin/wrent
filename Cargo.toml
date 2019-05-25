@@ -1,8 +1,8 @@
 [package]
 name = "wrent"
 version = "0.1.0"
-authors = ["Ethan"]
+authors = ["Ethan Malin"]
 edition = "2018"
 
 [dependencies]
-winit = "0.19.1"
+image = "*"
