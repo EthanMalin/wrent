@@ -1,6 +1,7 @@
 extern crate image;
-
 use image::{ImageBuffer, Rgb};
+
+mod geometry;
 
 type Image = ImageBuffer<Rgb<u8>, Vec<u8>>;
 
@@ -14,9 +15,18 @@ const IMG_PATH: &str = "C:\\Users\\Ethan\\dev\\projects\\wrent\\img\\generated.p
 
 fn main() {
 		let mut image: Image = ImageBuffer::new(WIDTH, HEIGHT);
-		line(1, 1, 94, 94, &mut image, [255, 255, 255]);
-		line(1, 94, 93, 2, &mut image, [255, 0, 0]);
-		line(27, 13, 90, 11, &mut image, [255, 0, 0]);
+		let a = geometry::Vec2::<i32>::new(0, 0);
+		let b = geometry::Vec2::<i32>::new(99, 0);
+		let c = geometry::Vec2::<i32>::new(0, 99);
+		let d = &b + &c;
+		
+		line(a.x, a.y, b.x, b.y, &mut image, [255, 255, 255]);
+		line(b.x, b.y, d.x, d.y, &mut image, [255, 255, 0]);
+		line(d.x, d.y, c.x, c.y, &mut image, [255, 0, 255]);
+		line(c.x, c.y, a.x, a.y, &mut image, [255, 0, 0]);
+		line(a.x, a.y, d.x, d.y, &mut image, [0, 255, 255]);
+		line(b.x, b.y, c.x, c.y, &mut image, [0, 255, 0]);
+
 		image.save(IMG_PATH).unwrap();
 }
 
