@@ -1,33 +1,52 @@
+// --- usings
 extern crate image;
 use image::{ImageBuffer, Rgb};
 
 mod geometry;
+mod model;
 
+// --- typedefs
 type Image = ImageBuffer<Rgb<u8>, Vec<u8>>;
 
-const WIDTH: u32 = 100;
-const HEIGHT: u32 = 100;
-
+// --- consts
+const WIDTH: u32 = 800;
+const HEIGHT: u32 = 800;
 #[cfg(target_os = "macos")]
 const IMG_PATH: &str = "/Users/ethanmalin/Desktop/projects/wrent/img/generated.png";
+#[cfg(target_os = "macos")]
+const MODEL_PATH: &str = "/Users/ethanmalin/Desktop/projects/wrent/obj/head.obj";
+
 #[cfg(taget_os = "windows")]
 const IMG_PATH: &str = "C:\\Users\\Ethan\\dev\\projects\\wrent\\img\\generated.png";
 
-fn main() {
-		let mut image: Image = ImageBuffer::new(WIDTH, HEIGHT);
-		let a = geometry::Vec2::<i32>::new(0, 0);
-		let b = geometry::Vec2::<i32>::new(99, 0);
-		let c = geometry::Vec2::<i32>::new(0, 99);
-		let d = &b + &c;
-		
-		line(a.x, a.y, b.x, b.y, &mut image, [255, 255, 255]);
-		line(b.x, b.y, d.x, d.y, &mut image, [255, 255, 0]);
-		line(d.x, d.y, c.x, c.y, &mut image, [255, 0, 255]);
-		line(c.x, c.y, a.x, a.y, &mut image, [255, 0, 0]);
-		line(a.x, a.y, d.x, d.y, &mut image, [0, 255, 255]);
-		line(b.x, b.y, c.x, c.y, &mut image, [0, 255, 0]);
 
-		image.save(IMG_PATH).unwrap();
+// --- code
+fn main() {
+
+	let model = model::Model::new(MODEL_PATH).unwrap();
+	let mut image: Image = ImageBuffer::new(WIDTH+1, HEIGHT+1);
+
+	for face in model.faces.iter() {
+		let v0 = model.vert(face.x as usize);
+		let v1 = model.vert(face.y as usize);
+		let v2 = model.vert(face.z as usize);
+
+		// coordinates are normalized to [-1, 1], so we need to de-normalize them to fit them on screen
+		let v0x = ( ((v0.x + 1f64) * (WIDTH as f64)) / 2f64 ) as i32;
+		let v0y = ( ((v0.y + 1f64) * (WIDTH as f64)) / 2f64 ) as i32;
+
+		let v1x = ( ((v1.x + 1f64) * (WIDTH as f64)) / 2f64 ) as i32;
+		let v1y = ( ((v1.y + 1f64) * (WIDTH as f64)) / 2f64 ) as i32;
+
+		let v2x = ( ((v2.x + 1f64) * (WIDTH as f64)) / 2f64 ) as i32;
+		let v2y = ( ((v2.y + 1f64) * (WIDTH as f64)) / 2f64 ) as i32;
+
+		line(v0x, v0y, v1x, v1y, &mut image, [255, 255, 255]);
+		line(v0x, v0y, v2x, v2y, &mut image, [255, 255, 255]);
+		line(v2x, v2y, v1x, v1y, &mut image, [255, 255, 255]);
+	}
+
+	image.save(IMG_PATH).unwrap();
 }
 
 // bresenham's
