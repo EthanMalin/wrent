@@ -1,10 +1,11 @@
 extern crate image;
 use image::{ImageBuffer, Rgb};
+use std::error;
 
 // --- ! move file reading capabilities to utility file
 use std::fs::File;
-use std::io::{Write, BufReader, BufRead, Error};
-use crate::geometry::{Vec2, Vec3};
+use std::io::{BufReader, BufRead, Error, ErrorKind};
+use crate::geometry::Vec3;
 
 type Image = ImageBuffer<Rgb<u8>, Vec<u8>>;
 
@@ -21,36 +22,25 @@ impl Model {
         let mut _verts: Vec< Vec3<f64> > = Vec::new();
         let mut _faces: Vec< Vec3<i32> > = Vec::new();
 
-        for line in buf.lines() {
-
-            let unwrapped = match line {
+        for _line in buf.lines() {
+            let line = match _line {
                 Ok(l) => l,
-                Err(e) => {
-                    println!("error: Model::new(path = {}), errmsg: {}", path, e);
-                    String::from("")
-                }
+                Err(e) => { return Err(e); },
             };
-            if unwrapped == "" { continue; }
 
-            // !! eventually remove these unwraps
-            // !! there are potentially lots of errors here. Would be good to modularize and make safer eventually
-            // !! also could be written cleaner, but that has to do with modularization
-            let mut chars = unwrapped.chars();
-            match chars.next().unwrap() {
-                'v' => {
-                    match chars.next().unwrap() {
-                        ' ' => {
-                            let split: Vec<&str> = chars.as_str().trim().split(" ").collect();
-                            let (x,y,z) = ( split[0].parse::<f64>().unwrap(), 
-                                            split[1].parse::<f64>().unwrap(), 
-                                            split[2].parse::<f64>().unwrap() );
+            let mut chars = line.chars();
+            match chars.next() {
+                Some('v') => {
+                    match chars.next() {
+                        Some(' ') => {
+                            let (x, y, z) = Model::obj_parse_helper_vert(chars.as_str())?;
                             _verts.push(Vec3::new(x, y, z));
                         },
                         _ => (),
                     }
 
                 },
-                'f' => {
+                Some('f') => {
                     let triples = chars.as_str().trim().split(" ");
                     let mut f_verts = Vec::<i32>::new();
                     for triple in triples {
@@ -65,6 +55,23 @@ impl Model {
         }
         
         Result::Ok( Model { verts: _verts, faces: _faces } )
+    }
+
+    fn obj_parse_helper_vert(s: &str) -> Result<(f64, f64, f64), Error> {
+        let split: Vec<&str> = s.trim().split(" ").collect();
+            let x = match split[0].parse::<f64>(){
+                Ok(_x) => _x,
+                Err(e) => { return Err(Error::new(ErrorKind::InvalidData, e.to_string())); }
+            };
+            let y = match split[1].parse::<f64>(){
+                Ok(_y) => _y,
+                Err(e) => { return Err(Error::new(ErrorKind::InvalidData, e.to_string())); }
+            };
+            let z = match split[2].parse::<f64>(){
+                Ok(_z) => _z,
+                Err(e) => { return Err(Error::new(ErrorKind::InvalidData, e.to_string())); }
+            };
+            return Ok((x, y, z));
     }
 
     pub fn n_verts(&self) -> usize {
