@@ -294,6 +294,7 @@ name = "wrent"
 version = "0.1.0"
 dependencies = [
  "image 0.21.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num-traits 0.2.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [metadata]

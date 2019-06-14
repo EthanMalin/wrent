@@ -7,7 +7,6 @@ use std::fs::File;
 use std::io::{BufReader, BufRead, Error, ErrorKind};
 use crate::geometry::Vec3;
 
-type Image = ImageBuffer<Rgb<u8>, Vec<u8>>;
 
 pub struct Model {
     pub verts: Vec< Vec3<f64> >,
