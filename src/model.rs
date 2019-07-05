@@ -1,7 +1,3 @@
-extern crate image;
-use image::{ImageBuffer, Rgb};
-use std::error;
-
 // --- ! move file reading capabilities to utility file
 use std::fs::File;
 use std::io::{BufReader, BufRead, Error, ErrorKind};
@@ -73,19 +69,57 @@ impl Model {
             return Ok((x, y, z));
     }
 
+    #[allow(dead_code)]
     pub fn n_verts(&self) -> usize {
         self.verts.len()
     }
 
+    #[allow(dead_code)]
     pub fn n_faces(&self) -> usize {
-        self.verts.len()
+        self.faces.len()
     }
 
+    #[allow(dead_code)]
     pub fn face(&self, idx: usize) -> &Vec3<i32> {
         &self.faces[idx]
     }
 
+    #[allow(dead_code)]
     pub fn vert(&self, idx: usize) -> &Vec3<f64> {
         &self.verts[idx]
+    }
+}
+
+// --- tests ------------------------------------------------------------------------------
+#[cfg(test)]
+mod test {
+    use super::*;
+
+        #[test]
+    fn model_build() {
+        let model_path = "/Users/ethanmalin/Desktop/projects/wrent/obj/test.obj";
+        let model = Model::new(model_path).unwrap();
+        let v_expected = 9;
+        let f_expected = 3;
+
+        println!("{}", model.n_verts());
+        println!("{}", model.n_faces());
+
+        assert_eq!(v_expected, model.n_verts());
+        assert_eq!(f_expected, model.n_faces());
+    }
+
+    #[test]
+    fn model_build_large() {
+        let model_path = "/Users/ethanmalin/Desktop/projects/wrent/obj/head.obj";
+        let model = Model::new(model_path).unwrap();
+        let v_expected = 1258;
+        let f_expected = 2492;
+
+        println!("{}", model.n_verts());
+        println!("{}", model.n_faces());
+
+        assert_eq!(v_expected, model.n_verts());
+        assert_eq!(f_expected, model.n_faces());
     }
 }

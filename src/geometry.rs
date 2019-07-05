@@ -32,7 +32,6 @@ pub fn barycentric(pts: [&Vec2<i32>; 3], p: &Vec2<i32>) -> Vec3<f64> {
 	return Vec3 { x: _x, y: _y, z: _z };
 }
 
-
 // --- impl : Vec2
 // new, dot, cross
 impl<T> Vec2<T>
@@ -250,5 +249,26 @@ mod test {
         let res = Vec3::cross(&lhs, &rhs);
 
         assert_eq!(expected, res);
+    }
+
+    #[test]
+    fn barycentric_test() {
+        let a = Vec2::new(15, 25);
+        let b = Vec2::new(19, 29);
+        let c = Vec2::new(16, 39);
+        let pts = [&a, &b, &c];
+        let p = Vec2::new(13, 11);
+        let res = barycentric(pts, &p);
+        let ans = Vec3::new(2.1923076923076925f64, -0.2692307692307692f64, -0.9230769230769231f64);
+        assert_eq!(res, ans);
+
+        let a = Vec2::new(401, 245);
+        let b = Vec2::new(585, 277);
+        let c = Vec2::new(559, 195);
+        let pts = [&a, &b, &c];
+        let p = Vec2::new(426, 260);
+        let res = barycentric(pts, &p);
+        let ans = Vec3::new(0.8835578002244668f64, 0.25392817059483724f64, -0.13748597081930417f64);
+        assert_eq!(res, ans);
     }
 }
