@@ -2,6 +2,14 @@ extern crate num_traits;
 
 use std::ops::{Add, Sub, Mul, Div};
 use num_traits::float::Float;
+
+// --- traits
+// dumb thing for function overloading
+pub trait AsVec2<T> {
+    fn x(&self) -> T;
+    fn y(&self) -> T;
+}
+
 // --- structs : Vec2, Vec3
 #[derive(Debug, PartialEq)]
 pub struct Vec2<T> {
@@ -43,6 +51,12 @@ impl<T> Vec2<T>
         pub fn dot(a: &Vec2<T>, b: &Vec2<T>) -> T {
             (a.x * b.x) + (a.y * b.y)
         }
+}
+
+// dumb thing for "function overloading"
+impl<T: Copy> AsVec2<T> for Vec2<T> {
+    fn x(&self) -> T { self.x }
+    fn y(&self) -> T { self.y }
 }
 
 // Vec2 operators
@@ -91,6 +105,12 @@ impl<T> Vec3<T>
         pub fn cross(a: &Vec3<T>, b: &Vec3<T>) -> Vec3<T> {
             Vec3 { x: (a.y*b.z)-(a.z*b.y), y: (a.z*b.x)-(a.x*b.z), z: (a.x*b.y)-(a.y*b.x) }
         }
+}
+
+// dumb thing for "function overloading"
+impl<T: Copy> AsVec2<T> for Vec3<T> {
+    fn x(&self) -> T { self.x }
+    fn y(&self) -> T { self.y }
 }
 
 impl<T> Vec3<T> 
